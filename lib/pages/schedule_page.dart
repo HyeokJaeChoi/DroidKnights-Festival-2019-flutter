@@ -4,7 +4,12 @@ import 'package:droidknights/pages/session_detail_dialog.dart';
 import 'package:droidknights/res/strings.dart';
 import 'package:flutter/material.dart';
 
-class SchedulePage extends StatelessWidget {
+class SchedulePage extends StatefulWidget {
+  @override
+  _SchedulePageState createState() => _SchedulePageState();
+}
+
+class _SchedulePageState extends State<SchedulePage> {
   static final int ITEMVIEW_TYPE_NORMAL = 0;
   static final int ITEMVIEW_TYPE_SESSTION = 1;
 
@@ -101,11 +106,11 @@ class SchedulePage extends StatelessWidget {
               backgroundImage: data.avatarUrl == ""
                   ? new Image.asset(Strings.IMAGES_DK_PROFILE).image
                   : new NetworkImage(
-                      data.avatarUrl,
-                    ),
+                data.avatarUrl,
+              ),
             ),
             Padding(padding: const EdgeInsets.symmetric(horizontal: 6.0)),
-            Flexible(
+            Expanded(
               child: Container(
                 constraints: BoxConstraints(minHeight: 60.0),
                 child: Column(
@@ -121,11 +126,23 @@ class SchedulePage extends StatelessWidget {
                     Text(
                       data.name,
                       style:
-                          TextStyle(color: Color(0xffa5b495), fontSize: 12.0),
+                      TextStyle(color: Color(0xffa5b495), fontSize: 12.0),
                     ),
                   ],
                 ),
               ),
+            ),
+            Padding(padding: const EdgeInsets.symmetric(horizontal: 6.0)),
+            GestureDetector(
+              child: Icon(
+                  data.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: data.isFavorite ? Colors.red : null
+              ),
+              onTap: () {
+                setState(() {
+
+                });
+              },
             ),
           ],
         ),

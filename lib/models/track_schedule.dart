@@ -1,26 +1,29 @@
-class ScheduleListModel{
+class ScheduleListModel {
   final List<ScheduleModel> list;
 
   ScheduleListModel({this.list});
 
   factory ScheduleListModel.fromJson(List<dynamic> parsedJson) {
     List<ScheduleModel> lists = new List<ScheduleModel>();
-    lists = parsedJson.map((i)=>ScheduleModel.fromJson(i)).toList();
+    lists = parsedJson.map((i) => ScheduleModel.fromJson(i)).toList();
 
     return ScheduleListModel(
         list: lists
     );
   }
 }
-class ScheduleModel{
+
+class ScheduleModel {
   final int type;
   final String name;
   final String title;
   final String time;
   final String avatarUrl;
   final String contents;
+  final bool isFavorite;
 
-  ScheduleModel({this.type, this.name, this.title, this.time, this.avatarUrl, this.contents});
+  ScheduleModel(
+      {this.type, this.name, this.title, this.time, this.avatarUrl, this.contents, this.isFavorite});
 
   factory ScheduleModel.fromJson(Map<String, dynamic> parsedJson){
     return ScheduleModel(
@@ -29,7 +32,8 @@ class ScheduleModel{
         title: parsedJson['title'],
         time: parsedJson ['time'],
         avatarUrl: parsedJson['avatarUrl'],
-        contents: parsedJson ['contents']
+        contents: parsedJson ['contents'],
+        isFavorite: parsedJson['is_favorite']
     );
   }
 }
