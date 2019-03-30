@@ -3,13 +3,19 @@ import 'package:droidknights/models/track_schedule.dart';
 import 'package:droidknights/pages/session_detail_dialog.dart';
 import 'package:droidknights/res/strings.dart';
 import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
 
 class SchedulePage extends StatelessWidget {
   static final int ITEMVIEW_TYPE_NORMAL = 0;
   static final int ITEMVIEW_TYPE_SESSTION = 1;
 
   Widget scheduleAppbar() {
-    return TabBar(
+    return SliverAppBar(
+      centerTitle: true,
+      title: Platform.isAndroid ? androidAppBarTitle() : iosAppBarTitle(),
+      pinned: true,
+      floating: true,
+      bottom: TabBar(
         labelColor: Color(0xff40d225),
         unselectedLabelColor: Colors.grey,
         indicatorColor: Color(0xff40d225),
@@ -17,30 +23,43 @@ class SchedulePage extends StatelessWidget {
           Tab(text: Strings.SCHEDULE_TAB_TRACK1),
           Tab(text: Strings.SCHEDULE_TAB_TRACK2),
           Tab(text: Strings.SCHEDULE_TAB_TRACK3),
-        ]
+        ],
+      ),
     );
   }
+
+  Widget androidAppBarTitle() => Image.asset(
+      Strings.SCHEDULE_TAB_IMAGES_APP_BAR,
+      fit: BoxFit.fitHeight,
+      height: 25,
+    );
+
+  Widget iosAppBarTitle() =>
+      Text(
+          Strings.SCHEDULE_TAB_APPBAR_TITLE,
+          style: new TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.w600,
+          ),
+      );
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
         length: 3,
         child: Scaffold(
-            appBar: AppBar(
-                centerTitle: true,
-                title: Image.asset(
-                  Strings.SCHEDULE_TAB_IMAGES_APP_BAR,
-                  fit: BoxFit.fitHeight,
-                  height: 25,
-                ),
-                bottom: scheduleAppbar()),
+          body: NestedScrollView(
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
+              scheduleAppbar(),
+            ],
             body: TabBarView(
               children: <Widget>[
                 trackScreen(Strings.SCHEDULE_TAB_JSON_TRACK_SCREEN1),
                 trackScreen(Strings.SCHEDULE_TAB_JSON_TRACK_SCREEN2),
                 trackScreen(Strings.SCHEDULE_TAB_JSON_TRACK_SCREEN3),
               ],
-            )
+            ),
+          ),
         )
     );
   }
@@ -54,6 +73,7 @@ class SchedulePage extends StatelessWidget {
           return Container(
             color: Colors.black,
             child: ListView.builder(
+                padding: new EdgeInsets.only(bottom: 30),
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, i) => Column(
                     children: <Widget>[_itemView(context, snapshot.data[i])])),
@@ -94,15 +114,16 @@ class SchedulePage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            CircleAvatar(
-              maxRadius: 28.0,
-              foregroundColor: Theme.of(context).primaryColor,
-              backgroundColor: Colors.grey,
-              backgroundImage: data.avatarUrl == ""
-                  ? new Image.asset(Strings.IMAGES_DK_PROFILE).image
-                  : new NetworkImage(
-                      data.avatarUrl,
-                    ),
+            ClipOval(
+              child: FadeInImage.assetNetwork(
+                width: 56.0,
+                height: 56.0,
+                fadeInDuration: const Duration(seconds: 0),
+                fadeOutDuration: const Duration(seconds: 0),
+                image: data.avatarUrls.first,
+                placeholder: Platform.isAndroid ? Strings.IMAGES_DK_PROFILE : Strings.IMAGES_DK_IOS_PROFILE,
+                fit: BoxFit.fitHeight,
+              ),
             ),
             Padding(padding: const EdgeInsets.symmetric(horizontal: 6.0)),
             Flexible(
@@ -119,7 +140,7 @@ class SchedulePage extends StatelessWidget {
                       style: TextStyle(fontSize: 16.0),
                     ),
                     Text(
-                      data.name,
+                      data.names.join(", "),
                       style:
                           TextStyle(color: Color(0xffa5b495), fontSize: 12.0),
                     ),
